@@ -58,3 +58,31 @@ export const signup = async (req, res) => {
         res.status(500).json({ error: "Internal server error"});
     }
 };
+
+export const login = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        const getUser = await User.findOne({ username });
+        const verifyPassword = await bcrypt.compare(password, getUser?.password || "");
+
+        if(!getUser || !verifyPassword) {
+            return res.status(400).json({ error: "Invalid username or password"});
+        }
+
+        generateTokenAndSetcookie(getUser._id, res);
+        
+        res.status(200).json({
+            _id: getUser._id,
+            username: getUser.username,
+            fullname: getUser.fullname,
+            email: getUser.email,
+            profileImg: getUser.profileImg,
+            bio: getUser.bio,
+            saved: getUser.saved
+        });
+    } catch (error) {
+        console.log("Error in the login controller ", error.message);
+        res.status(500).json({ error: "Internal server error"});
+    }
+};
