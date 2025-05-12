@@ -19,7 +19,7 @@ const ReplySchema = mongoose.Schema({
             default: []
         }
     ],
-    thumbsUp: [
+    thumbsDown: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
@@ -49,7 +49,7 @@ const CommentSchema = mongoose.Schema({
             default: []
         }
     ],
-    thumbsUp: [
+    thumbsDown: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -73,7 +73,7 @@ const AnimalSchema = new mongoose.Schema({
         default: ""
     },
     habitat: {
-        type: String,
+        type: [String],
         required: true,
         enum: ["air", "land", "water"]
     },
@@ -92,7 +92,7 @@ const AnimalSchema = new mongoose.Schema({
             default: []
         }
     ],
-    thumbsUp: [
+    thumbsDown: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
