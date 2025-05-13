@@ -15,7 +15,8 @@
   },
   "scripts": {
     "dev": "nodemon backend/server.js",
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "seed": "node backend/seeds/user.seed.js"
   },
   "keywords": [],
   "author": "",

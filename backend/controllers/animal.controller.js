@@ -56,3 +56,26 @@ export const deleteAniamlPost = async (req, res) => {
         res.status(500).json({ error: "Internal server error"});
     }
 };
+
+export const getAllAnimalPost = async (req, res) => {
+    try {
+        const animals = await Animal.find().sort({ createdAt: -1}).populate({
+        path: "comments.author",
+        select: "username email", // populate comment authors
+      })
+      .populate({
+        path: "comments.replies.author",
+        select: "username email", // populate reply authors
+      });
+      
+
+      if (animals.length === 0){
+        return res.status(200).json([]);
+      }
+
+      res.status(200).json(animals);
+    } catch (error) {
+        console.log("Error in the getAllAnimalPost controller", error.message);
+        res.status(500).json({ error: "Internal server error"});
+    }
+};
