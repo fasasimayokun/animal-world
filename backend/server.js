@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import db from "./db/connectMongoDb.js";
 import authRoute from "./routes/auth.route.js";
 import animalRoute from "./routes/animal.route.js";
+import commentAndReplyRoute from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 import {v2 as cloudinary} from "cloudinary";
 
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
 app.use("/api/animals", animalRoute);
+app.use("/api/comments", commentAndReplyRoute);
 
 const PORT = process.env.PORT || 5000;
 
