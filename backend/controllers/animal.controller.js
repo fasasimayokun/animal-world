@@ -135,3 +135,48 @@ export const updateAnimalPost = async (req, res) => {
         res.status(500).json({ error: "Internal server error"});
     }
 };
+
+export const thumbsUpAndDownOnAniaml = async (req, res) => {
+    try {
+        const { animalId, voteType } = req.params;
+        const userId = req.user._id;
+        
+        const user = await User.findById(userId);
+        if(!user) {
+            return res.status(404).json({ error: "User not found"});
+        }
+
+        const animal = await Animal.findById(animalId);
+        if(!animal) {
+            return res.status(404).json({ error: "Animal not found"});
+        }
+
+        const isThumbsUp = animal.thumbsUp.includes(userId);
+        const isThumbsDown = animal.thumbsDown.includes(userId);
+
+        if (voteType === "up") {
+            if (isThumbsUp) {
+                animal.thumbsUp.pull(userId); // toggle off like
+            } else {
+                animal.thumbsUp.push(userId);
+                if (isThumbsDown) animal.thumbsDown.pull(userId); // remove opposite
+            }
+        } else if (voteType === "down") {
+            if (isThumbsDown) {
+                animal.thumbsDown.pull(userId); // toggle off dislike
+            } else {
+                animal.thumbsDown.push(userId);
+                if (isThumbsUp) animal.thumbsUp.pull(userId); // remove opposite
+            }
+        } else {
+            return res.status(400).json({ error: "Invalid voteType. Use 'up' or 'down'." });
+        }
+
+        await animal.save();
+        res.status.json(animal);
+
+    } catch (error) {
+        console.log("Error in thumbsUpAndDownOnAniaml controller", error.message);
+        res.status(500).json({ error: "Internal sever error"});
+    }
+};
