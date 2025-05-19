@@ -151,9 +151,9 @@ export const thumbsUpAndDownOnAniaml = async (req, res) => {
             return res.status(404).json({ error: "Animal not found"});
         }
 
-        const isThumbsUp = animal.thumbsUp.includes(userId);
-        const isThumbsDown = animal.thumbsDown.includes(userId);
-
+        const isThumbsUp = animal.thumbsUp.some(id => id.toString() === userId.toString());
+        const isThumbsDown = animal.thumbsDown.some(id => id.toString() === userId.toString());
+        
         if (voteType === "up") {
             if (isThumbsUp) {
                 animal.thumbsUp.pull(userId); // toggle off like
@@ -173,7 +173,7 @@ export const thumbsUpAndDownOnAniaml = async (req, res) => {
         }
 
         await animal.save();
-        res.status.json(animal);
+        res.status(200).json(animal);
 
     } catch (error) {
         console.log("Error in thumbsUpAndDownOnAniaml controller", error.message);

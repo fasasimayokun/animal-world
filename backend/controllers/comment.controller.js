@@ -3,26 +3,27 @@ import User from "../models/user.model.js";
 
 export const commentOnAnimalPost = async (req, res) => {
     try {
-          const { text } = req.body;
-          const animalPostId = req.params.id;
-          const authorId = req.user._id;
+        const { text } = req.body;
+        const animalPostId = req.params.id;
+        const authorId = req.user._id;
 
-          if(!text) {
-            return res.status(400).json({ error: "Text field is required"});
-          }
+        if(!text) {
+        return res.status(400).json({ error: "Text field is required"});
+        }
 
-          const animal = await Animal.findById(animalPostId);
-          if(!animal) {
-            return res.status(400).json({ error: "Aniaml not found"});
-          }
-          const comment = {
-            author: authorId,
-            text
-          };
+        const animal = await Animal.findById(animalPostId);
+        if(!animal) {
+          return res.status(400).json({ error: "Aniaml not found"});
+        }
+        const comment = {
+          author: authorId,
+          text
+        };
 
-          animal.comments.push(comment);
-          await animal.save()
-
+        animal.comments.push(comment);
+        await animal.save();
+        
+        res.status(200).json(animal);        
     } catch (error) {
         console.log("Error in commentOnAnimalPost", error.message);
         res.status(500).json({ error: "Internal server error"});
@@ -33,6 +34,7 @@ export const updateComment = async (req, res) => {
     try {
         const {animalId, commentId} = req.params;
         const authorId = req.user._id;
+        const { text } = req.body;
 
         const animal = await Animal.findById(animalId);
         const comment = animal.comments.id(commentId);
@@ -76,17 +78,17 @@ export const deleteComment = async (req, res) => {
         }
 
         // Only allow deletion if the user is the comment's author
-    if (!comment.author.equals(authorId)) {
-      return res.status(403).json({ error: "Unauthorized to delete this comment" });
-    }
+        if (!comment.author.equals(authorId)) {
+        return res.status(403).json({ error: "Unauthorized to delete this comment" });
+        }
 
-    // Remove the comment
-    comment.remove(); // or animal.comments.id(commentId).remove()
+        // Remove the comment
+        animal.comments.pull(commentId); 
 
-    // Save the updated animal
-    await animal.save();
+        // Save the updated animal
+        await animal.save();
 
-    res.status(200).json({ message: "Comment deleted successfully" });
+        res.status(200).json({ message: "Comment deleted successfully" });
     } catch (error) {
         console.log("Error in deleteComment controller", error.message);
         res.status(500).json({ error: "Internal server error"});
@@ -179,6 +181,7 @@ export const updateReply = async (req, res) => {
     try {
         const { animalId, commentId, replyId} = req.params;
         const authorId = req.user._id;
+        const { text } = req.body;
 
         const animal = await Animal.findById(animalId);
         if(!animal) {
@@ -233,7 +236,7 @@ export const deleteReply = async (req, res) => {
         return res.status(403).json({ error: "Unauthorized to delete this reply" });
         }
 
-        reply.remove();
+        comment.replies.pull(replyId);
         await animal.save();
 
         res.status(200).json({ message: "Reply deleted successfully" });
