@@ -39,7 +39,7 @@ const SignUpPage = () => {
           <form onSubmit={handleSubmit} className="mb-0">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text font-medium">Full Name</span>
+                  <span className="label-text font-medium">FullName</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -48,7 +48,7 @@ const SignUpPage = () => {
                   <input
                     type="text"
                     className={`w-full border border-gray-300 rounded-md px-4 py-2 pl-10`}
-                    placeholder="Fullname"
+                    placeholder="John Doe"
                     name="fullname"
                     value={formData.fullname}
                     onChange={handleInputChange}
@@ -67,7 +67,7 @@ const SignUpPage = () => {
                   <input
                     type="text"
                     className={`w-full border border-gray-300 rounded-md px-4 py-2 pl-10`}
-                    placeholder="Username"
+                    placeholder="johndoe"
                     name="username"
                     value={formData.username}
                     onChange={handleInputChange}
@@ -86,7 +86,7 @@ const SignUpPage = () => {
                   <input
                     type="email"
                     className={`w-full border border-gray-300 rounded-md px-4 py-2 pl-10`}
-                    placeholder="mail@gmail.com"
+                    placeholder="you@gmail.com"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -105,7 +105,7 @@ const SignUpPage = () => {
                   <input
                     type={ showPassword ? "text" : "password"}
                     className={`w-full border border-gray-300 rounded-md px-4 py-2 pl-10`}
-                    placeholder="Password"
+                    placeholder="********"
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -137,7 +137,7 @@ const SignUpPage = () => {
 
       <AuthImagePattern
         title="Join our community"
-        subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
+        subtitle="Learn more about your favourite animal, and share your facts with friends."
       />
     </div>
   )
