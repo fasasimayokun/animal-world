@@ -2,6 +2,8 @@ import { Eye, EyeOff, Lock, MessageSquare, User } from "lucide-react";
 import { useState } from "react";
 import AuthImagePattern from "../../../components/AuthImagePattern";
 import { Link } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const [ showPassword, setShowPassword] = useState(false);
@@ -10,9 +12,38 @@ const LoginPage = () => {
     password:"",
   });
 
+  const queryClient = useQueryClient();
+
+  const {mutate:login, isPending, isError, error} = useMutation({
+    mutationFn: async ({ username, password}) => {
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password}),
+        })
+
+        const data = res.json();
+
+        if(!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: () => {
+      toast.success("Login successful");
+      queryClient.invalidateQueries({ queryKey: ['authUser']});
+    }
+  });
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    login(formData);
   };
 
   const handleInputChange = (e) => {
@@ -80,13 +111,16 @@ const LoginPage = () => {
                 </div>
               </div>
               
-              <button type="submit" className="btn btn-primary w-full mt-2">Create Account</button>
+              <button type="submit" className="btn btn-primary w-full mt-2">
+                	{isPending ? "Loading..." : "Login"}
+              </button>
+              {isError && <p className='text-red-500'>{error.message} </p> }
           </form>
           <div className="text-center mt-2">
               <p className="text-base-content/60">
                 Don&apos;t have an account?
                 <Link to="/signup" className="link link-primary">
-                  Create Account
+                  Sign up
                 </Link>
               </p>
           </div>

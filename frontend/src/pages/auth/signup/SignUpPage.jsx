@@ -2,6 +2,8 @@ import { useState } from "react";
 import { MessageSquare, User, Mail, Lock, EyeOff, Eye, Loader2, User2, MailIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import AuthImagePattern from "../../../components/AuthImagePattern";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
   const [ showPassword, setShowPassword] = useState(false);
@@ -12,9 +14,40 @@ const SignUpPage = () => {
     email:""
   });
 
+  const queryClient = useQueryClient();
+
+  const {mutate:signup, isPending, isError, error} = useMutation({
+    mutationFn: async ({ fullname, username, password, email}) => {
+      try {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ fullname, username, password, email}),
+        });
+
+        const data = res.json();
+        if(!res.ok) {
+          throw new Error(data.error || "Failed to create Account");
+        }
+        console.log(data);
+        return data;
+      } catch (error) {
+        console.error(error);
+        throw new Error(error);
+      }
+    },
+    onSuccess: () => {
+      toast.success("Account created successfully");
+      queryClient.invalidateQueries({queryKey: ['authUser']});
+    }
+  });
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    signup(formData);
   };
 
   const handleInputChange = (e) => {
@@ -120,7 +153,10 @@ const SignUpPage = () => {
                 </div>
               </div>
               
-              <button type="submit" className="btn btn-primary w-full mt-2">Create Account</button>
+              <button type="submit" className="btn btn-primary w-full mt-2">
+                { isPending ? "Loading..." : "Create Account" }
+              </button>
+              {isError && <p className='text-red-500'>{error.message}</p>}
           </form>
           <div className="text-center mt-2">
               <p className="text-base-content/60">
