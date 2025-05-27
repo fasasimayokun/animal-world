@@ -136,7 +136,7 @@ export const updateAnimalPost = async (req, res) => {
     }
 };
 
-export const thumbsUpAndDownOnAniaml = async (req, res) => {
+export const thumbsUpAndDownOnAnimal = async (req, res) => {
     try {
         const { animalId, voteType } = req.params;
         const userId = req.user._id;
@@ -173,8 +173,11 @@ export const thumbsUpAndDownOnAniaml = async (req, res) => {
         }
 
         await animal.save();
-        res.status(200).json(animal);
-
+        res.status(200).json({
+          message: "Vote updated",
+          thumbsUpCount: animal.thumbsUp.length,
+          thumbsDownCount: animal.thumbsDown.length,
+        });
     } catch (error) {
         console.log("Error in thumbsUpAndDownOnAniaml controller", error.message);
         res.status(500).json({ error: "Internal sever error"});

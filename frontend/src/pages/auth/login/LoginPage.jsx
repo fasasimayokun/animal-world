@@ -25,7 +25,7 @@ const LoginPage = () => {
           body: JSON.stringify({ username, password}),
         })
 
-        const data = res.json();
+        const data = await res.json();
 
         if(!res.ok) {
           throw new Error(data.error || "Something went wrong");

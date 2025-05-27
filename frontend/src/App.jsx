@@ -1,44 +1,35 @@
-import { Navigate, Route, Routes } from "react-router-dom"
-import LoginPage from "./pages/auth/login/LoginPage"
-import SignUpPage from "./pages/auth/signup/SignUpPage"
-import HomePage from "./pages/home/HomePage"
-import { useQuery } from "@tanstack/react-query"
-import AnimalPostPage from "./pages/animal/AnimalPostPage"
+// src/App.jsx
+import { Navigate, Route, Routes } from "react-router-dom";
+import LoginPage from "./pages/auth/login/LoginPage";
+import SignUpPage from "./pages/auth/signup/SignUpPage";
+import HomePage from "./pages/home/HomePage";
+import AnimalPostPage from "./pages/animal/AnimalPostPage";
+import EditAnimalPostPage from "./pages/animal/EditAnimalPostPage";
+import Layout from "./layouts/Layout";
+import { Toaster } from 'react-hot-toast'
+import { useQuery } from "@tanstack/react-query";
+import { useAuthUser } from "./hooks/useAuthUser";
 
 function App() {
-  const {data:authUser} = useQuery({
-    queryKey: ['authUser'],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/auth/me");
-        const data = await res.json();
-        if(data.error) return null;
-
-        if(!res.ok) {
-          throw new Error(data.error || "Something went wrong");
-        }
-        console.log("The current AuthUser", authUser);
-        return data;
-      } catch (error) {
-          throw new Error(error);
-      }
-    },
-    retry: false,
-  });
-
+  const { data: authUser } = useAuthUser();
 
   return (
-    <div className="flex max-w-6xl mx-auto">
+    <>
       <Routes>
-        {/*<Route path='/' element={<HomePage /> } /> */}
-        <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
-				<Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to='/' />} />
-				<Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
-        <Route path='/animal/post' element={<AnimalPostPage /> } />
-        
+        {/* Layout pages */}
+        <Route element={<Layout />}>
+          <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+          <Route path="/animal/post" element={<AnimalPostPage />} />
+          <Route path="/animal/update/:id" element={<EditAnimalPostPage />} />
+        </Route>
+
+        {/* Auth pages */}
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
       </Routes>
-    </div>
-  )
+      <Toaster />
+    </>
+  );
 }
 
-export default App
+export default App;
