@@ -1,11 +1,14 @@
-import { Bookmark, Edit, MessageSquare, Trash, ThumbsUp, ThumbsDown, BookmarkCheck, } from "lucide-react";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { Bookmark, Edit,Trash, ThumbsUp, ThumbsDown, BookmarkCheck, } from "lucide-react";
+import { useQueryClient, useMutation} from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useAuthUser } from "../../hooks/useAuthUser";
+import CommentPage from "../../pages/comment/CommentPage";
+import { FaRegComment } from "react-icons/fa";
 
 const AnimalPostCard = ({ animal }) => {
   const queryClient = useQueryClient();
+
   const { data: authUser } = useAuthUser();
   const currentUserId = authUser?._id;
 
@@ -95,7 +98,7 @@ const AnimalPostCard = ({ animal }) => {
 
     const { mutate: bookmark } = useMutation({
     mutationFn: async (animalId) => {
-      const res = await fetch(`api/auth/save/${animalId}`, {
+      const res = await fetch(`/api/auth/save/${animalId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -136,6 +139,7 @@ const AnimalPostCard = ({ animal }) => {
     onSettled: () => {
       // Ensure fresh data
       queryClient.invalidateQueries({ queryKey: ['authUser'] });
+      queryClient.invalidateQueries({ queryKey: ['savedPosts', currentUserId] });
     }
   });
 
@@ -172,11 +176,13 @@ const AnimalPostCard = ({ animal }) => {
   return (
     <div className="bg-gray-50 p-4 rounded-md shadow-md max-w-4xl w-full mx-auto">
       <div className="flex flex-col md:flex-row gap-4">
-        <img
-          src={animal.image || "https://placehold.co/200"}
-          alt={animal.name || "Animal"}
-          className="w-full md:w-48 h-48 object-cover rounded-md"
-        />
+        <Link to={`/animal/${animal._id}`}>
+          <img
+            src={animal.image || null}
+            alt={animal.name}
+            className="rounded-lg w-full h-48 object-cover"
+          />
+        </Link>
         <div className="flex-1">
           <h3 className="text-2xl font-semibold">{animal.name}</h3>
           <p className="text-gray-600">{animal.description}</p>
@@ -185,10 +191,19 @@ const AnimalPostCard = ({ animal }) => {
 
       <div className="flex justify-between items-center mt-4 text-gray-500 border-t pt-3 text-lg">
         <div className="flex items-center gap-4">
-          <button className="flex items-center gap-1">
-            <MessageSquare className="size-5" />
-            {animal?.comments?.length ?? 0}
-          </button>
+          <div
+								className='flex gap-1 items-center cursor-pointer group'
+								onClick={() => document.getElementById("comments_modal" + animal._id).showModal()}
+							>
+								<FaRegComment className='w-4 h-4  text-slate-500 group-hover:text-sky-400' />
+								<span className='text-sm text-slate-500 group-hover:text-sky-400'>
+									{animal.comments.length}
+								</span>
+							</div>
+
+							{/* We're using Modal Component from DaisyUI */}
+							<CommentPage animal={animal} />
+
           <button
             onClick={() => handleThumbsUpAndDown("up")}
             className={`flex items-center gap-1 transition-colors ${

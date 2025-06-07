@@ -2,6 +2,7 @@ import { generateTokenAndSetcookie } from "../lib/utils/generateToken.js";
 import Animal from "../models/animal.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import { v2 as cloudinary } from "cloudinary"
 
 export const signup = async (req, res) => {
     try {
@@ -90,7 +91,7 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
     try {
-        res.cookies("jwt","",{maxAge:0});
+        res.cookie("jwt","",{maxAge:0});
         res.status(200).json({ messagee: "Logout sucessfully"});
     } catch (error) {
         console.log("Error in the logout controller", error.message);
@@ -105,6 +106,21 @@ export const getMe = async (req, res) => {
     } catch (error) {
         console.log("Error in the getme controller", error.message);
         res.status(500).json({ error: "Internal server error"});
+    }
+};
+
+export const getUserProfile = async (req, res) => {
+    const {username} = req.params;
+
+    try {
+        const user = await User.findOne({username}).select("-password");
+        if (!user) {
+            return res.status(404).json({ error: "User Not Found"});
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+        console.log("Error in getUserProfile controller ", error.message);
     }
 };
 
@@ -156,6 +172,16 @@ export const updateUser = async (req, res) => {
     } catch (error) {
         console.log("Error in updateUser ", error.message);
         res.status(500).json({ error: error.message});
+    }
+};
+
+export const getSavedPost = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).populate("saved");
+        if (!user) return res.status(404).json({ error: "User not found" });
+        res.status(200).json(user.saved); // return only the saved Animal posts
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };
 
