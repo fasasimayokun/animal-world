@@ -15,8 +15,8 @@
     "cross-env": "^7.0.3"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon backend/server.js",
-    "start": "cross-env NODE_ENV=production node backend/server.js",
+    "dev": "NODE_ENV=development nodemon backend/server.js",
+    "start": "NODE_ENV=production node backend/server.js",
     "seed": "node backend/seeds/user.seed.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
