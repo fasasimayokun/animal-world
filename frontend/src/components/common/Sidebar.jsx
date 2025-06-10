@@ -1,19 +1,18 @@
 import { MdHomeFilled } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
-import { GiElephant } from "react-icons/gi";
+import { SiAnimalplanet } from "react-icons/si";
 import { Link } from "react-router-dom";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Settings } from "lucide-react";
 import { FilePlus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
 
 const Sidebar = () => {
   const { data: authUser } = useAuthUser();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
@@ -49,7 +48,7 @@ const Sidebar = () => {
             to="/animals"
             className="flex gap-3 items-center hover:bg-base-300 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
           >
-            <GiElephant className="w-6 h-6" />
+            <SiAnimalplanet className="w-6 h-6" />
             <span className="text-lg hidden md:block">Animals</span>
           </Link>
         </li>

@@ -11,7 +11,7 @@ const LandingPage = () => {
             "url('https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1350&q=80')",
         }}
       >
-        <div className="absolute inset-0 bg-black bg-opacity-60" />
+        {/* <div className="absolute inset-0 bg-black bg-opacity-60" /> */}
         <div className="relative z-10 max-w-2xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to Animal Kingdom</h1>
           <p className="text-lg">
