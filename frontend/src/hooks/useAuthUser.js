@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-export const useAuthUser = () =>
+export const useAuthUser = () => 
   useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
@@ -11,4 +11,5 @@ export const useAuthUser = () =>
       return data;
     },
     retry: false,
+    staleTime: 0,  // ⬅️ Important: forces re-fetch on mount
   });

@@ -35,7 +35,7 @@ const EditAnimalPostPage = () => {
         imageFile: null,
         imagePreview: data.image || null, // assuming backend returns full Cloudinary URL
         description: data.description || "",
-        facts: Array.isArray(data.facts) ? data.facts.join("\n") : data.facts || "",
+        facts: data.facts || "",
         habitat: data.habitat || [],
       });
     }
@@ -80,7 +80,7 @@ const EditAnimalPostPage = () => {
     onSuccess: () => {
       toast.success("Animal updated successfully");
       queryClient.invalidateQueries(["animals"]);
-      navigate("/");
+      navigate("/animals");
     },
     onError: (err) => {
       toast.error(err.message || "Something went wrong");
@@ -96,7 +96,7 @@ const EditAnimalPostPage = () => {
   if (isError) return <p className="text-red-500">Error loading animal</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-0 bg-white rounded-lg shadow-md space-y-8">
+    <div className="max-w-4xl mx-auto p-0 rounded-lg shadow-md space-y-8">
       <h2 className="text-3xl font-bold text-center mb-6">Edit Animal</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <input

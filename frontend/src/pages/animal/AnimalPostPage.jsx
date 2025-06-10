@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useNavigate } from 'react-router-dom';
 
 const AnimalPostPage = () => {
   const [animal, setAnimal] = useState({
@@ -11,10 +12,11 @@ const AnimalPostPage = () => {
     facts: "",
     habitat: []
   });
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
-  const { mutate: create, isPending, isError, error } = useMutation({
+  const { mutate: create, isLoading, isError, error } = useMutation({
     mutationFn: async ({ name, imageBase64, description, facts, habitat }) => {
       const res = await fetch("/api/animals/create", {
         method: "POST",
@@ -45,6 +47,7 @@ const AnimalPostPage = () => {
         facts: "",
         habitat: [],
       });
+      navigate("/animals");
     }
   });
 
@@ -69,8 +72,9 @@ const AnimalPostPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md space-y-8 ml-4">
+    <div className="max-w-2xl ml-0 mx-auto rounded-lg shadow-md p-8 space-y-8">
       <h2 className="text-3xl font-bold text-center mb-6">Post Animal</h2>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <input
           type="text"
@@ -83,7 +87,7 @@ const AnimalPostPage = () => {
         />
 
         <div>
-          <label className="font-medium">Upload Image</label>
+          <label className="block font-medium mb-1">Upload Image</label>
           <input
             type="file"
             accept="image/*"
@@ -110,7 +114,7 @@ const AnimalPostPage = () => {
         />
 
         <div>
-          <label className="font-medium">Interesting Facts (one per line)</label>
+          <label className="block font-medium mb-1">Interesting Facts (one per line)</label>
           <textarea
             name="facts"
             placeholder="Enter each fact on a new line"
@@ -122,10 +126,10 @@ const AnimalPostPage = () => {
         </div>
 
         <div>
-          <label className="font-medium">Habitat</label>
-          <div className="flex flex-wrap gap-4">
+          <label className="block font-medium mb-2">Habitat</label>
+          <div className="flex flex-wrap gap-6">
             {["land", "water", "air"].map((type) => (
-              <label key={type} className="flex items-center gap-2">
+              <label key={type} className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   value={type}
@@ -144,8 +148,12 @@ const AnimalPostPage = () => {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary w-full">
-          {isPending ? "Creating..." : "Create Animal"}
+        <button
+          type="submit"
+          className={`btn btn-primary w-full ${isLoading ? "loading" : ""}`}
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating..." : "Create Animal"}
         </button>
 
         {isError && <p className="text-red-500 mt-2">{error.message}</p>}

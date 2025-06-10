@@ -188,7 +188,7 @@ export const getSavedPost = async (req, res) => {
 export const saveUnsavePost = async (req, res) => {
     try {
         const userId = req.user._id;
-        const {animalId} = req.params; 
+        const {animalId} = req.params;
 
         const animal = await Animal.findById(animalId);
         if(!animal) {

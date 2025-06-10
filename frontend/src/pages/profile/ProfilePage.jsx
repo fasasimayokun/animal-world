@@ -57,7 +57,7 @@ const ProfilePage = () => {
 	if (!user) return <p className='text-center text-lg mt-4'>User not found</p>;
 
 	return (
-		<div className='flex-[4_4_0] min-h-screen bg-base-100'>
+		<div className='flex-[4_4_0] min-h-screen bg-base-100 mx-auto max-w-3xl ml-0'>
 
 			{/* Top Bar */}
 			<div className='flex items-center gap-4 px-4 py-3 border-b border-gray-700'>
